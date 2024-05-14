@@ -281,9 +281,125 @@ pred_labels = [labels[i] if confidence >= confidence_threshold else 'Neutral' fo
 \section{Social Media Data Collection}
 The following section details the methods used to collect data from social media platforms for sentiment analysis. The data collection functionality is implemented within the \pinline{XScraper} and \pinline{RedditScraper} classes in \pinline{toolkit/data/social.py}. Unfortunately, due to new limitations with the free version of the X API which prevent searching posts, the \pinline{XScraper} class is not fully implemented and will be excluded from this section.
 
-The \pinline{RedditScraper} class is used to scrape post data from Reddit, including comments if the user's configuration calls for it, using the PRAW library
+The \pinline{RedditScraper} class is used to scrape post data from Reddit, including comments if the user's configuration calls for it, using the PRAW library. It interfaces with Reddit's API to retrieve data based on specified subreddits and search terms.
+
+Firstly, the class initialises by setting up an instance of the Reddit API \pinline{praw.Reddit}. In this method, the necessary credentials are fetched (client ID, client secret, and user agent) from the environment variables. Storing these as environment variables prevents them from being hard-coded, increasing security and allows flexibility between users.
+
+\begin{python}
+class RedditScraper(object):
+    def __init__(self):
+            self.api = praw.Reddit(client_id=os.getenv('REDDIT_CLIENT_ID'), client_secret=os.getenv('REDDIT_CLIENT_SECRET'), user_agent=os.getenv('REDDIT_USER_AGENT'))
+\end{python}
+
+Next, the class defines the \pinline{search_subs()} method, which is designed to search Reddit for posts and comments across any number of subreddits based on a list of given search terms. It takes a dictionary \pinline{subs} where the keys are the subreddits to search and the values are lists of search terms, and an integer \pinline{n}, which is the number of posts to retrieve per subreddit. Then it returns either a single \pinline{DataFrame} containing the scraped posts, or a tuple of two \pinline{DataFrame}s, containing both scraped posts and comments.
+
+\begin{python}
+def search_subs(self, subs: dict[str, list[str]], n: int = 10) -> 'pd.DataFrame | tuple[pd.DataFrame, pd.DataFrame]':
+\end{python}
+
+Initially, the function defines two empty lists \pinline{posts} and \pinline{comments}, it then iterates through the given dictionary's key/value pairs, calling \pinline{self.search_sub()} on them and storing the returned values in temporary lists; these are then concatenated with the main lists before moving on to the next iteration.
+
+\begin{python}
+posts = []
+comments = []
+for sub, search_terms in subs.items():
+    temp_posts, temp_comments = self.search_sub(sub, search_terms, n)
+    posts += temp_posts
+    comments += temp_comments
+\end{python}
+
+As the Reddit API returns \pinline{Submission} and \pinline{Comment} objects, the function must now extract the needed attributes from these objects. To do this, two lists \pinline{post_attributes} and \pinline{post_comments} are created to be two dimensional lists. The function then iterates through the list of posts, initialising a list \pinline{post_comments}, and checks \pinline{post.is_self} to make sure the post is text-only. If it is, certain attributes are pulled from the \pinline{Submission} object:
+
+\begin{itemize}
+    \item \pinline{id}: ID of the submission.
+    \item \pinline{subreddit.display_name}: Provides an instance of \pinline{Subreddit} and then retrieves the name of that subreddit.
+    \item \pinline{created_utc}: The time the submission was created, represented in Unix Time. 
+    \item \pinline{title}: The title of the submission.
+    \item \pinline{selftext}: The body text of the submission.
+    \item \pinline{score}: The number of `upvotes' for the submission.
+\end{itemize}
+
+Also, while not an attribute of \pinline{Submission}, the tuple \pinline{tuple(comment for comment in post_comments)} is created as a list of comment IDs and added, with the other attributes, to a row in \pinline{post_attributes}.
+
+\begin{python}
+for post in posts:
+    post_comments = []
+    if post.is_self:
+        if scrape_comments:
+            # Functionality will be covered next
+        post_attributes.append([post.id, post.subreddit.display_name, post.created_utc, post.title, post.selftext, post.score, tuple(comment for comment in post_comments)])
+\end{python}
+
+If scraping comments is enabled by the user, this will also iterate over the comments of the post, pulling the same attributes as it did for the post, but along with the \pinline{submission.id} of the comment, referring to the parent post.
+
+\begin{python}
+for comment in comments[posts.index(post)]:
+    post_comments.append(comment.id)
+    comment_attributes.append([comment.id, comment.submission.id, comment.subreddit.display_name, comment.created_utc, comment.body, comment.score])
+\end{python}
+
+Finally, the function defines column labels for the post and comment attributes, and adds them to \pinline{posts_df} and \pinline{comments_df}, returning the resulting \pinline{DataFrame}s.
+
+\begin{python}
+columns = ['ID', 'Subreddit', 'Date/Time', 'Title', 'Body', 'Score', 'Comments']
+posts_df = pd.DataFrame(post_attributes, columns=columns)
+if scrape_comments: 
+    columns = ['ID', 'PostID', 'Subreddit', 'Date/Time', 'Body', 'Score']
+    comments_df = pd.DataFrame(comment_attributes, columns=columns)
+\end{python}
+
+The function \pinline{search_sub()}, which is called in \pinline{search_subs()}, searches Reddit for posts and comments within a specified subreddit based on the given search terms (none if the list is empty). It's parameters are the subreddit's name, the search terms to query, and the amount of posts to collect, returning a list of posts and comments.
+
+\begin{python}
+def search_sub(self, sub: str, search_terms: list[str], n: int = 10) -> tuple[list, list]:
+\end{python}
+
+It then iterates over the search terms, requesting posts that contain the query in the specified subreddit, and adds the received post to the \pinline{posts} list. If comment scraping is enabled, it calls \pinline{self.search_comments()}, passing the post as an argument, and adds the returned list to the \pinline{comments} list.
+
+\begin{python}
+if search_terms:
+    for search_term in search_terms:
+        for post in self.api.subreddit(sub).search(search_term):
+            posts.append(post)
+            if scrape_comments:
+                post.comment_sort = 'hot'
+                comments.append(self.search_comments(post))
+\end{python}
+
+If \pinline{search_terms} is empty, a near identical code block is executed, the difference being that it only has one iteration over the top ten posts in the subreddit after sorting by `hot'.
+
+\begin{python}
+for post in self.api.subreddit(sub).hot(limit=n):
+# Rather than `for post in self.api.subreddit(sub).search(search_term):'
+\end{python}
+
+The final function in \pinline{RedditScraper} is \pinline{search_comments()}. This method takes arguments \pinline{post} and \pinline{limit}, being the parent post and the amount of comments to retrieve respectively. This function simply iterates over the \pinline{CommentForest} returned by \pinline{post.comments}, and adds the results to a list of comments to be returned.
+
+\begin{python}
+def search_comments(self, post, limit: int = 5) -> list:
+post_comments = []
+    post.comment_limit = limit
+    post.comments.replace_more(limit=0) # Remove all MoreComments
+    for comment in post.comments:
+        post_comments.append(comment)
+    return post_comments
+\end{python}
 
 \section{Database Management}
+All management of the database is done within the \pinline{PostCollector} class found in \pinline{toolkit/data/database.py}. This class incorporates the functionality of \pinline{BertModel}, \pinline{RedditScraper}, and database management operations defined in the class itself.
+
+\begin{python}
+class PostCollector(object):
+    def __init__(self, model, scraper, profile: dict[str, any]) -> None:
+        self.model = model
+        self.scraper = scraper
+        self.profile = profile
+        self.path = f'{toolkit.get_dir()}/src/profiles/{self.profile["id"]}'
+        self.posts = pd.DataFrame(columns=['ID', 'Subreddit', 'Date/Time', 'Title', 'Body', 'Score', 'Comments', 'Sentiment'])
+        self.comments = pd.DataFrame(columns=['ID', 'PostID', 'Subreddit', 'Date/Time', 'Body', 'Score', 'Sentiment'])
+        if not self.from_json():
+            pass
+\end{python}
 
 \section{Data Visualisation}
 
