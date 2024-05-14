@@ -1,0 +1,50 @@
+\documentclass[harvard]{lincolncsthesis}
+
+%TC:envir python [ignore] displaymath
+
+\input{preamble/packages.tex}
+
+\input{preamble/thesis-details.tex}
+
+\input{preamble/bib-setup.tex}
+
+\setlength{\parindent}{0.635cm}
+\setlength{\parskip}{0pt plus 1pt}
+
+\begin{document}
+
+\maketitle
+
+\input{chapters/acknowledgements.tex}
+
+\input{chapters/abstract.tex}
+
+\thesisTables
+\thesisBodyStart
+
+\chapter{Introduction}
+\input{chapters/introduction.tex}
+
+\chapter{Literature Review}
+\input{chapters/literature-review.tex}
+
+\chapter{Requirements Analysis}
+\input{chapters/reqs-analysis.tex}
+
+\chapter{Design \& Methodology}
+\input{chapters/design-methodology.tex}
+
+\chapter{Implementation}
+\input{chapters/implementation.tex}
+
+\chapter{Results \& Discussion}
+\input{chapters/results-discussion.tex}
+
+\chapter{Conclusion}
+\input{chapters/conclusions.tex}
+
+\printReferences
+
+\printLudography
+
+\end{document}

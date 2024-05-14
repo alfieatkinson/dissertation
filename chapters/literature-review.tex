@@ -1,0 +1,58 @@
+\section{Introduction to Sentiment Analysis and NLP}
+Sentiment analysis is a key area of Natural Language Processing (NLP). It is used to extract and analyse the opinions and emotions from written passages \citep{dhuria2015sentiment, mishra2022data}. This technique is useful in social media and e-commerce sites \citep{anny2022sentiment}, as there is an abundance of data with over 500 million daily posts on X (formerly known as Twitter) alone \citep{sayce2022twitter}.
+
+\section{Instances of Public Sentiment Impacting Brands}
+Public sentiment historically has a significant impact on a brand's credibility, as evidenced by a range of studies. \citet{berestova2022consumers} found that consumers prefer to engage with brands which take public stances on real world issues. \citet{mostafa2013more} further supports this, writing about the generally positive sentiment surrounding various large brands on social media.
+
+In 2016 Samsung released the Samsung Galaxy Note 7 Smartphone. Shortly after its release there were cases of the phone overheating and sometimes `exploding. This caused massive backlash online, with many users of X posting negatively about the incident \citep{kang2019social}.
+
+\citet{lange2011people} emphasizes the importance of sentiment analysis for managing reputational risk, especially in response to incidents like the Galaxy Note 7. \citet{hu2017analyzing} also highlights the part social media users play in shaping a brand's perception, user loyalty, and advocacy.
+
+These studies all show the crucial role that public sentiment plays in shaping a brand's reputation and success.
+
+\section{Nuanced Issues in Sentiment Analysis}
+While catastrophic events such as the Galaxy Note 7 incident may capture immediate attention, the use of sentiment analysis to identify more subtle issues has been the interest of a range of studies. \citet{pang2004sentimental} proposed a machine learning method which focused on the subjective parts of a given text, that may identify specific complaints or criticisms. \citet{zhou2016linguistic} highlighted the distinct properties of complaints and praises, while \citet{nasukawa2003sentiment} emphasized the need to identify semantic relationships between expressions and the subject matter.
+
+However, \citet{d2019sentiment} gave a new perspective on sentiment analysis by discussing it's limitations and proposing a dual sentiment analysis approach. This approach would create sentiment-reversed reviews, meaning that for each training and test review, a corresponding reversed review would be generated. This technique aims to capture the dual nature of a given sentiment by considering both positive and negative perspectives. A technique such as this can be particularly useful for social media posts, as there is a strong likelihood that the posts contain both positive and negative sentiment.
+
+\section{Explosive Growth of Social Media Data}
+The surge in social media usage, as highlighted by \citet{dean2023social}, underscores the increasing need for efficient data analysis techniques for market research, where social media data can provide valuable insight \citep{camacho2021new, ausat2023utilisation}.
+
+To meet this need, \citet{malic2019social} emphasizes the importance of systematic data collection, secure storage technology, and efficient querying of said data. This can be done through the parallelisation of data extraction using various web scraping tools and APIs.
+
+\section{Goals and Challenges of Market Research}
+Market research plays a crucial role in providing information for management decision-making, with the primary goals being to analyse market conditions, determine consumer segments, and assess sales possibilities \citep{cvijanovic2014market}. However, the increasing volume and complexity of data, changes in consumer preferences, and growing competitive pressure present significant challenges with traditional techniques \citep{shikovets2023digital}. Traditional data collection methods such as surveys and focus groups are also limited in their ability to accurately capture sentiment due to issues with polarity shift, data sparsity, and binary classification \citep{abirami2017survey}. 
+
+To address these challenges, the industry is undergoing significant changes, including the integration of digital tools, the use of advanced technology, and the adoption of new research techniques \citep{barbu2013eight}. \citet{vikram2020use} talk about how brands are increasingly relying on user feedback to improve their products and services. This feedback can take various forms, such as social media posts and product reviews \citep{kanev2023leveraging}. \citet{kupec2015marketing} talks about how clients are increasingly seeking innovative approaches that provide higher value information, and \citet{gerdes2008integrative} highlights how valuable the integration of both qualitative and quantitative feedback is, providing a more comprehensive understanding of consumer sentiment.
+
+Overall, brands are interested in feedback that can help them enhance product quality, service quality, and design, and that can provide insights into user experiences and perceptions efficiently and effectively.
+
+\section{Machine Learning Models}
+Both traditional machine learning models and deep learning models can be used in sentiment analysis. Traditional models such as logistic regression and decision trees, while robust and allowing for rapid prototyping, may not perform as well as deep learning models when it comes to large datasets \citep{rajnayak2017traditional}.
+
+In fact, \citet{kansara2020comparison} and \citet{kamruzzaman2021comparative} revealed the superiority of deep learning models over traditional machine learning models. Both found that deep learning models often outperformed traditional models in accuracy and performance.
+
+To further support this, \citet{dhola2021comparative} demonstrated the effectiveness of various deep learning models such as Bidirectional Encoder Representations from Transformers (BERT) and Long Short-Term Memory (LSTM). \citet{kamruzzaman2021comparative} also highlighted the success of models like Single Convolutional Neural Network (CNN) + FastText and 2-L CNN + Gated Recurrent Unit (GRU) in sentiment classification specifically.
+
+While BERT has been widely acclaimed for its performance in NLP tasks, its superiority over LSTM is not universal. \citet{ezen2020comparison} found that for intent classification with small datasets, LSTM outperformed BERT. However, \citet{rangila2022sentiment} reported that BERT achieved higher accuracy and efficiency in sentiment analysis tasks. It has also been demonstrated that BERT is very effective in lexical simplification \citep{qiang2021lsbert}, which may be useful for analysing social media posts.
+
+Linking back to \citet{d2019sentiment}, \citet{yin2023prompt} talk about their progress using BERT for Aspect-Based Sentiment Analysis (ABSA). This technique aims to predict sentiment polarity to specific aspects within the given sentence, allowing for more nuanced feedback to be detected. \citet{yin2023prompt} proposed a Prompt-oriented Fine-tuning Dual BERT (PFDualBERT) model which can capture complex semantic relevance and consider scarce data samples simultaneously.
+
+\section{Data Collection Through Web Scraping}
+Web-scraping is a data collection technique for automatically capturing data surrounding certain topics, which is used more frequently than ever in social research \citep{marres2013scraping}.
+
+\citet{hernandez2018web} presented a methodology for collecting historical tweets by using web-scraping, and \citet{baskaran2018automated} proposed a way to extract structured data records from health discussion forums using semantic analysis. On top of this, \citet{dewi2019social} developed a system to scrape social media websites such as Facebook and X using their respective APIs, along with regular expressions to suppress overload information, presenting relevant information.
+
+\section{Ethical Considerations}
+Systems for Automatic Emotion Recognition (AER) and sentiment analysis can facilitate amazing progress (e.g., improving public health and commerce), however it can also be used maliciously (e.g., suppressing dissidents and manipulating voters) \citep{mohammad2022ethics}. \citet{veeraselvi2014semantic} and \citet{basiri2014exploiting} both emphasize the importance of considering context and history of user comments, as well as the potential bias in the data. \citet{liu2010sentiment} and \citet{chandra2015sentiment} further highlight the need for transparency and accountability when using sentiment analysis tools, particularly in the face of challenges such as manipulation, privacy concerns, and economic impact.
+
+\citet{krotov2020tutorial} provide a specific list of questions that a researcher must consider when web scraping, such as Terms of Service (ToS) compliance, data protection, and privacy policies. \citet{fiesler2020no} and \citet{mancosu2020you} both talk about the ambiguity and inconsistency that is present in the ToS for social media platforms, which can make it difficult to be certain that rules are followed. Whereas \citet{zia2020there} focuses more on the fact that harvesting online data could infringe on a user's privacy, emphasizing the importance of anonymity when storing data.
+
+\citet{steinmann2016theoretical} propose a theoretical framework for ethical reflection in big data research, providing a privacy matrix that intersects ethical concerns with different contexts of data use. This approach offers a practical way to assess the ethical implications of data collection and use.
+
+\section{Challenges and Mitigation Strategies}
+There are many challenges in data analysis, and those challenges are multifaceted. It is difficult to be sure to extract only relevant, valuable information from large datasets, all while abiding by legal and ethical obligations and responsibly using the findings of data analysis \citep{nayak2002intelligent, choenni2021using}.
+
+Due to the significant amount of data that can be contained within these datasets, there are also various resource and scalability issues that may arise \citep{duffield2014challenges}. The possibility of failure in data analysis makes the importance of mitigating these challenges very apparent \citep{staegemann2020determining}.
+
+To address these problems, data sampling strategies, responsible usage of analyses, and planning for and understanding potential failures are imperative.
