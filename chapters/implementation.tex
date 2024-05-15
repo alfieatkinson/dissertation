@@ -388,18 +388,76 @@ post_comments = []
 \section{Database Management}
 All management of the database is done within the \pinline{PostCollector} class found in \pinline{toolkit/data/database.py}. This class incorporates the functionality of \pinline{BertModel}, \pinline{RedditScraper}, and database management operations defined in the class itself.
 
+The class initialises with the passed arguments \pinline{model} and \pinline{scraper}, an instance of \pinline{BertModel} and \pinline{RedditScraper} respectively, and a \pinline{profile}, which is a dictionary containing the details of subreddits and search terms to be scraped. \pinline{self.path} is then set to point at a directory based on the profile ID, which is where the collected data will be stored in \pinline{.json} format. Finally, two empty \pinline{DataFrame}s are created with the relevant column labels for posts and comments, and the object calls \pinline{self.from_json()} to load any data that may already exist for this profile.
+
 \begin{python}
 class PostCollector(object):
     def __init__(self, model, scraper, profile: dict[str, any]) -> None:
         self.model = model
         self.scraper = scraper
         self.profile = profile
-        self.path = f'{toolkit.get_dir()}/src/profiles/{self.profile["id"]}'
+        self.path =f'{toolkit.get_dir()}/src/profiles/{self.profile["id"]}'
         self.posts = pd.DataFrame(columns=['ID', 'Subreddit', 'Date/Time', 'Title', 'Body', 'Score', 'Comments', 'Sentiment'])
         self.comments = pd.DataFrame(columns=['ID', 'PostID', 'Subreddit', 'Date/Time', 'Body', 'Score', 'Sentiment'])
-        if not self.from_json():
-            pass
+        self.from_json()
 \end{python}
+
+The \pinline{scrape_posts()} method is responsible for collecting data from the subreddits and search terms configured in the loaded profile. It collects and processes posts and comments, cleans the text, predicts sentiment, and stores the data in the database.
+
+Firstly, it initialises an instance of the \pinline{TextProcessor} object for later, and retrieves the subreddits to be scraped from \pinline{self.profile}. Then it calls \pinline{search_subs()} to retrieve posts and or comments using the \pinline{RedditScraper} depending on the current configuration; the resulting data is stored in \pinline{new_posts} and or \pinline{new_comments}.
+
+\begin{python}
+def scrape_posts(self, n: int) -> None:
+    text_processor = toolkit.TextProcessor()
+    subs = self.profile['subs']
+    if scrape_comments:
+        new_posts, new_comments = self.scraper.search_subs(subs, n=n)
+    else:
+        new_posts = self.scraper.search_subs(subs, n=n)
+\end{python}
+
+Next, the method iterates over each post ID in \pinline{new_posts} to get the title and body of each one using \pinline{self.get_record()}, which returns the specific record from a \pinline{DataFrame} for the given ID and column. If the title or body is \pinline{None}, then the row is dropped from \pinline{new_posts}, otherwise the title and body are cleaned with the \pinline{TextProcessor} and concatenated with a BERT separator token \pinline{'[SEP]'}.
+
+\begin{python}
+for ID in new_posts['ID']:
+    title = self.get_record(new_posts, ID, 'Title')
+    body = self.get_record(new_posts, ID, 'Body')
+    if title is None or body is None:
+        index = new_posts.index[new_posts['ID'] == ID]
+        new_posts.drop(index)
+        continue
+    title = text_processor.clean(title)
+    body = text_processor.clean(body)
+    text = f"{title} [SEP] {body}"
+    if not text.strip():
+        print(f"Empty text for post ID: {ID}")
+    else:
+        all_texts.append(text)
+\end{python}
+
+All non-empty concatenated texts are then added to a list for batch sentiment prediction through \pinline{BertModel}'s \pinline{predict()} method, and once the sentiment is analysed, these values are inserted as a column into \pinline{new_posts}. Finally, \pinline{new_posts} is added to \pinline{self.posts}, removing any duplicate posts to ensure the integrity of the data.
+
+\begin{python}
+post_sentiments = self.model.predict(all_texts)
+new_posts.insert(6, 'Sentiment', post_sentiments, True)
+self.posts = pd.concat([self.posts, new_posts], ignore_index=True)
+self.posts.drop_duplicates(keep='last', inplace=True)
+self.posts.drop_duplicates('ID', keep='last', inplace=True)
+\end{python}
+
+If comment search is enabled, there is similar behavior, the only difference is that the title and body of the parent post are concatenated with the body of the comment using the same BERT separator tokens. This allows BERT to predict the sentiment of the comment with the context of the parent post.
+
+\begin{python}
+for ID in new_comments['ID']:
+    post_id = self.get_record(new_comments, ID, 'PostID')
+    # Get records of post title, body, and comment
+    if title is None or body is None:
+        # Drop as before
+    # Clean the texts
+    text = f"{title} [SEP] {body} [SEP] {comment}"
+\end{python}
+
+The new data is then stored in \pinline{.json} format for later use using \pinline{self.to_json()}.
 
 \section{Data Visualisation}
 
