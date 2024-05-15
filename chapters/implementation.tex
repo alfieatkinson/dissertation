@@ -460,7 +460,247 @@ for ID in new_comments['ID']:
 The new data is then stored in \pinline{.json} format for later use using \pinline{self.to_json()}.
 
 \section{Data Visualisation}
+The \pinline{Analyser} class in \pinline{toolkit/analysis/analyse.py} is crucial for interpreting sentiment data to the user via visual representation; large datasets could be overwhelming to the user, so by visualising the data and breaking it up into more digestible formats, the user is able to make quicker and more accurate insights. Furthermore, representing the data graphically makes it far easier to spot patterns that are not immediately obvious when looking at raw data, such as the change in sentiment over time or comparisons between different subreddits or queries.
+
+Upon initialisation, the \pinline{Analyser} class prepares the passed \pinline{DataFrame} by converting the sentiment labels into a numerical format with \pinline{self._set_sentiment_score()}, where `Positive', `Neutral', and `Negative' labels are converted to 1, 0, and -1 respectively. These new values are inserted as a new column, and if weighting by score is enabled in settings, these values are multiplied by the score (number of `upvotes') of the post; this allows the user to see how many people agree with each post, thus leading to a more in depth analysis. 
+
+\begin{python}
+class Analyser(object):
+    def __init__(self, dataset: pd.DataFrame) -> None:
+        self.dataset = dataset
+        self._set_sentiment_score()
+
+    def _set_sentiment_score(self) -> None:
+        if toolkit.get_config('score_weighting'):
+            self.dataset['SentimentScore'] = self.dataset['Score'] * self.dataset['Sentiment'].apply(self._sentiment_to_int)
+\end{python}
+
+This class defines three functions for chart creation, \pinline{generate_line()}, \pinline{generate_pie}, and \pinline{generate_bar}, for creating a line, pie, and bar chart respectively. They each take the \pinline{canvas} argument, which is a \pinline{FigureCanvas} object from \pinline{matplotlib} for use as a \pinline{QtPy} widget, along with a chart title, and start/end date for the plotted data. Both the line and bar chart also take the \pinline{labels} argument, which is a tuple containing the labels for the axis.
+
+\begin{python}
+def generate_line(self, canvas: FigureCanvas, title: str, labels: tuple[str, str], start_date: float, end_date: float) -> None:
+def generate_pie(self, canvas: FigureCanvas, title: str, start_date: float = None, end_date: float = None) -> None:
+def generate_bar(self, canvas: FigureCanvas, title: str, labels: tuple[str, str], start_date: float = None, end_date: float = None) -> None:
+\end{python}
+
+The line chart is useful for visualising the changes in sentiment score over a given time-frame; line charts can be useful for identifying trends such as seasonal variations, spikes, or declines in sentiment. This specific implementation also allows for data from different subreddits to be visualised separately as independently plotted lines, if \pinline{split_subs} is configured to do so.
+
+\begin{figure}[h]
+    \centering
+    \begin{subfigure}{0.49\textwidth}
+        \centering
+        \includegraphics[width=\textwidth]{figures/line-chart.png}
+    \end{subfigure}
+    \begin{subfigure}{0.49\textwidth}
+        \centering
+        \includegraphics[width=\textwidth]{figures/split-line-chart.png}
+    \end{subfigure}
+    \caption{Example line charts with subreddit splitting enabled and disabled.}
+\end{figure}
+
+The pie chart represents the distribution of sentiment classifications within the dataset as a whole. Pie charts are great for showing the proportions of sentiment classes within the whole dataset, which makes them intuitive to the user, giving easy insight into which sentiment category dominates and how sentiment is distributed.
+
+Finally, the bar chart compares the total sentiment scores across different subreddits. They are ideal for comparative analysis as they clearly display proportional quantities for different groups (in this case, subreddits),  allowing for clear visual indication of which subreddits and queries have the highest/lowest sentiment scores.
+
+\begin{figure}[h]
+    \centering
+    \begin{subfigure}{0.49\textwidth}
+        \centering
+        \includegraphics[width=\textwidth]{figures/pie-chart.png}
+    \end{subfigure}
+    \begin{subfigure}{0.49\textwidth}
+        \centering
+        \includegraphics[width=\textwidth]{figures/bar-chart.png}
+    \end{subfigure}
+    \caption{Example pie and bar chart.}
+\end{figure}
+
+For further insight into the implementation of these charts, visit the GitHub repository \citep{sentimentanalysistool}.
 
 \section{Graphical User Interface}
 
-\section{Other Implementations}
+The GUI of the application (\pinline{toolkit/ui/interface.py}) serves as the means by which the user can interact with the functionality of the back-end processes. It is designed to provide an intuitive and user-friendly experience, while keeping performance and responsiveness to a high standard. This section outlines the architecture and components of the GUI, highlighting the core aspects such as the distinct windows and the use of parallel programming for long-running tasks. For the purpose of this application, the \pinline{QtPy} library was used, as it excels at creating complex, responsive, and user-friendly interfaces, as well as providing parallelism features.
+
+    \subsection{Main Window}
+    The \pinline{MainWindow} class, inheriting from \pinline{QtPy}'s \pinline{QMainWindow}, creates the main application, it displays widgets that link to the core functionalities of the program in an accessible format. The layout is built up by embedding other layouts and widgets within each other, creating an interface which is complex but pleasant to use. 
+
+    \begin{figure}[h]
+    \centering
+        \includegraphics[width=0.95\textwidth]{figures/main-window-labels.png}
+    \caption{The main window of the application.}
+    \end{figure}
+
+    As can be seen in the provided figure, the window consists of several main elements: a menu bar, a profile changer, a time period editor, a scrollable widget featuring all posts for the profile, and an area with tabs displaying different charts. Each distinct area is built up using layouts and widgets embedded in parent layouts, which are used as building blocks for the GUI. For example, the time period editor is built up through several different \pinline{MainWindow} methods, namely: 
+
+    \begin{itemize}
+        \item \pinline{self._make_time_period_layout()}
+        \item \pinline{self._make_custom_time_layout()}
+        \item \pinline{self._make_time_changer_layout()}
+    \end{itemize}
+
+    The time period layout consists of five buttons to change the time period to either the last twenty-four hours, week, month, year, or all-time.
+
+    The \pinline{QtPy} object \pinline{QHBoxLayout} is used to create a layout consisting of a row of horizontal `boxes', which are used for placing widgets (or other layouts) into. Due to the one-dimensional layout of this, it is necessary to embed layouts \pinline{QHBoxLayout} and \pinline{QVBoxLayout} within each other to achieve a complex GUI. Once the layout is created, a \pinline{QPushButton} widget is created, connected to the \pinline{self._time_period_day()} function, and added to the layout as such (code reduced for simplicity):
+
+    \begin{python}
+def _make_time_period_layout(self):
+    layout = QHBoxLayout()
+    button_day = QPushButton("Day")
+    button_day.clicked.connect(self._time_period_day)
+    layout.addWidget(button_day)
+    layout.addStretch()
+    return layout
+    \end{python}
+
+    Following this, another layout is created to enable the user to select a more specific time period using selection boxes. This layout is implemented in a similar way, however, to prevent the charts updating every time the user increments or decrements the start/end date, a button labelled `Apply' is also added. For this button to work and pass the new start/end date to its connected function, a lambda function must be created as the passed function.
+
+    \begin{python}
+def _make_custom_time_layout(self):
+    layout = QHBoxLayout()
+    selector_from = QDateEdit()
+    selector_to = QDateEdit()
+    apply = QPushButton("Apply")
+    apply.clicked.connect(lambda: self._set_dates(selector_from, selector_to))
+    # Add widgets and return layout
+    \end{python}
+
+    These are then added to their parent layout, itself being a child of other layouts.
+
+    \begin{python}
+def _make_time_changer_layout(self):
+    layout = QVBoxLayout()
+    time_period_layout = self._make_time_period_layout() 
+    custom_time_layout = self._make_custom_time_layout() 
+    layout.addLayout(time_period_layout)
+    layout.addLayout(custom_time_layout)
+def _make_left_layout(self):
+    layout.addLayout(self._make_time_changer_layout())
+def _make_main_layout(self):
+    layout.addLayout(self._make_left_layout())
+    \end{python}
+
+    Finally, the finished layout, made up of dozens of child layouts and widgets, is set as the layout of the window itself in \pinline{MainWindow.__init__()}.
+
+    \begin{python}
+class MainWindow(QMainWindow):
+    def __init__(self, *args, **kwargs):
+        self.widget = QWidget(self)
+        self.setCentralWidget(self.widget)
+        self.layout = self._make_layout()
+        self.widget.setLayout(self.layout)  
+    \end{python}
+
+    To see the \pinline{MainWindow} in full detail, see the GitHub \citep{sentimentanalysistool}.
+
+    \subsection{Profile Editor}
+    The \pinline{ProfileEditorWindow} is a dedicated interface for managing the brand profiles. It allows the user to create, edit, and delete profiles; each profile contains information about which subreddits to monitor and analyse, and which search terms, if any, to query.
+
+    \begin{figure}[h]
+        \centering
+            \includegraphics[width=0.95\textwidth]{figures/profile-editor-window-labels.png}
+        \caption{The profile editor window.}
+    \end{figure}
+
+    In order for this window to communicate with the main window, a \pinline{pyqtSignal} object must be defined, which allows the transmission of signals between different objects in a program. This signal object is then used in the \pinline{ProfileEditorWindow._update()} function to \pinline{emit()} a signal that is picked up by the \pinline{MainWindow}. This allows the main window to update every time the profile editor window does.
+
+    \begin{python}
+class ProfileEditorWindow(QWidget):
+    submit_clicked = pyqtSignal()
+    def _update(self):
+        self.submit_clicked.emit()
+
+# Inside MainWindow
+self.window_profile_editor.submit_clicked.connect(self._update)
+    \end{python}
+
+    To gain more insight into the workings of the \pinline{ProfileEditorWindow}, please refer to the GitHub repository \citep{sentimentanalysistool}.
+
+    \subsection{Settings}
+    The \pinline{SettingsWindow} class allows the user to customise various settings and preferences. It is divided into several distinct tabs for organisation and ease of use, such as General, Analysis, Personalisation, etc.
+
+    \begin{figure}[h]
+        \centering
+            \includegraphics[width=0.95\textwidth]{figures/settings-window-labels.png}
+        \caption{The profile editor window.}
+    \end{figure}
+    
+    \begin{itemize}
+        \item \textbf{General}: user can change the update interval, number of posts to scrape, and toggle comment scraping.
+        \item \textbf{Analysis}: provides options for text processing such as lowercase, lemmatisation, and \pinline{BeautifulSoup} parsing, as well as model configurations like toggling cross-validation and changing the confidence threshold.
+        \item \textbf{Privacy \& Security}: settings such as encryption can be toggled here (no functionality implemented).
+        \item \textbf{Personalisation}: allows the user to customise the appearance of the application, such as font, colour, and chart styling (no functionality implemented).
+        \item \textbf{Export \& Sharing}: allows the user to initiate a data export or share analyses (no functionality implemented).
+        \item \textbf{Feedback \& Support}: provides the user with links to the creator's LinkedIn profile, send the creator an email, or visit the codebase on GitHub.
+    \end{itemize}
+
+    Each of these tabs have their own unique settings, for example, in the `General' tab, the update interval can be set using a \pinline{QSpinBox} that sets the interval in milliseconds, allowing a range anywhere from one second to twenty-four hours.
+
+    \begin{python}
+update_interval_spinbox = QSpinBox()
+update_interval_spinbox.setMinimum(1000)
+update_interval_spinbox.setMaximum(86400000)
+update_interval_spinbox.setValue(toolkit.get_config("update_interval"))
+update_interval_spinbox.valueChanged.connect(lambda value, name="update_interval": self._update_setting(name, value))
+    \end{python}
+
+    To prevent constant updates to the \pinline{MainWindow}, all settings changes are deferred inside of the \pinline{self.settings} dictionary until the user clicks the `Apply' button.
+
+    \begin{python}
+def _update_setting(self, name, value):
+    self.settings[name] = value
+    \end{python}
+
+    This window uses similar functionality as the \pinline{ProfileEditorWindow} to communicate with the \pinline{MainWindow} using a \pinline{pyqtSignal} object, which this time is sent when the user clicks `Apply' and \pinline{self._apply_settings()} is called.
+
+    \begin{python}
+class SettingsWindow(QWidget):
+    submit_clicked = pyqtSignal()
+    def _apply_settings(self):
+        for setting_name, value in self.settings.items():
+            toolkit.set_config(setting_name, value)
+        self.submit_clicked.emit()
+    \end{python}
+
+    \subsection{Parallelism for Long-Running Tasks}
+    To ensure the application runs smoothly and efficiently, specifically during resource-intensive tasks such as social media scraping and analysis, \pinline{QtPy}'s parallelism features are used. Running tasks in parallel allows the application to perform multiple tasks simultaneously, significantly reducing the time required to execute. It is also ensures that the GUI stays responsive during these tasks rather than freezing, meaning the user can continue to interact with and use the program unimpeded.
+
+    In the \pinline{MainWindow}, parallelism is employed in the execution of two functions: \pinline{self._collect_new_posts()} and \pinline{self._train_model()}, both of which are long-running tasks which would freeze the application for an undesirably extended period of time without parallelism. Initially, the class defines a \pinline{self.threadpool} storing a \pinline{QtPy.QThreadPool} object, which handles the queuing and execution of `workers'.
+
+    \begin{python}
+class MainWindow(QMainWindow):
+    def __init__(self, *args, **kwargs):
+        self.threadpool = QThreadPool()
+    \end{python}
+
+    To be able to use the \pinline{QThreadPool}, a new class \pinline{Worker} is defined, inheriting from \pinline{QtPy.QRunnable}, with the function to execute passed as an argument to it's \pinline{run()} method, using the \pinline{@pyqtSlot()} decorator.
+
+    \begin{python}
+class Worker(QRunnable):
+    def __init__(self, fn: callable, *args, **kwargs) -> None:
+        super(Worker, self).__init__()
+        self.fn = fn
+        self.signals = WorkerSignals()
+    @pyqtSlot()
+    def run(self):
+        try:
+            result = self.fn(*self.args, **self.kwargs) # Execute the passed function
+        except: # Emit exception
+        else:
+            self.signals.result.emit(result)
+        finally:
+            self.signals.finished.emit()
+    \end{python}
+
+    Finally, the two long-running functions are called using multithreading by passing them as a callable upon a \pinline{Worker} creation. The program starts the worker and waits for the `finished' signal from to be emitted, so that it can call \pinline{self._update()}.
+
+    \begin{python}
+def _collect_new_posts(self):
+    worker = Worker(lambda: self.collector.scrape_posts(toolkit.get_config('n_posts')))
+    worker.signals.finished.connect(self._update)
+    self.threadpool.start(worker)
+
+def _train_model(self):
+    worker = Worker(self.model.train)
+    worker.signals.finished.connect(self._update)
+    self.threadpool.start(worker)
+    \end{python}
