@@ -9,7 +9,7 @@ Sentiment analysis, also known as opinion mining, is the process of using NLP te
     \item To analyse the text, it is inputted into a pre-trained sentiment classification model. This model will return a prediction of the sentiment within this text and assigns a classification to it based on the patterns it has learned in training.
 \end{itemize}
 
-This project will be testing and harnessing various machine learning models to analyse the sentiment of posts on social media. These posts will be scraped from the internet using various Application Programming Interfaces (APIs), and the process will be made accessible for a layperson via an application with a user friendly interface.
+This project will be testing and harnessing various machine-learning models to analyse the sentiment of posts on social media. These posts will be scraped from the internet using various Application Programming Interfaces (APIs), and the process will be made accessible for a layperson via an application with a user friendly interface.
 
 % A section providing wider context surrounding the project and why it is important.
 \section{Context}
@@ -23,38 +23,38 @@ In general, it now seems more effective to collect and analyse data from social 
 \section{Motivations}
 Traditional methods of gathering public opinions are through the use of surveys and focus groups. These methods can be tedious and expensive to set up, as well as not really being as effective as may be necessary.
 
-Surveys involve preset questions which can be interpreted differently to how the surveyor intended, it is also hard to detect emotions without the survey being in the form of an in-person interview, which is a slow process and more expensive to conduct. 
+Surveys involve preset questions which can be interpreted differently to how the surveyor intended, though it is also hard to detect emotions without the survey being in the form of an in-person interview, which is a slow process and more expensive to conduct. 
 
-Focus groups can be susceptible to `groupthink' and dishonest responses as a by-product of the group setting. There is also the possibility of the results of the focus group being skewed towards one member who is louder than the rest, and even the focus group as a whole could skew results by not accurately representing the target audience.
+Focus groups can be susceptible to `groupthink' and dishonest responses as a by-product of the group setting. There is the possibility of the results of the focus group being skewed towards one member who is louder than the rest, and even the focus group as a whole could skew results by not accurately representing the target audience.
 
-On top of this, even existing sentiment analysis approaches have their limitations, many are not accessible to the average user as they have complicated or no Graphical User Interface (GUI). They also do not monitor sentiment in real-time, and do not have a high level of user customisation. I also want to be sure to mitigate any ethical issues related to data privacy and bias by ensuring that my data is abstracted upon collection, and bias from things such as bot accounts is prevented.
+On top of this, existing sentiment analysis approaches have their limitations, many are not accessible to the average user as they have complicated or no Graphical User Interface (GUI). They do not monitor sentiment in real-time, and do not have a high level of user customisation. It is imperative to mitigate any ethical issues related to data privacy and bias by ensuring that my data is abstracted upon collection, and bias from things such as bot accounts is prevented.
 
-There are several other issues with these approaches and they will be addressed in depth later in the report, where it will provide the advantages of using machine learning for sentiment analysis and how it tackles the issues with traditional methods.
+There are several issues with these approaches and they are addressed in-depth in further chapters, where it will provide the advantages of using machine-learning for sentiment analysis and how it tackles the issues with traditional methods.
 
 % A section to outline the main objectives of the project.
 \section{Objectives}
 The aim of this project is to create a piece of software that is easy to set up and use, which will provide live insights into online sentiment pertaining to a specific brand. It has several distinct objectives which must be met for it to be considered a success.
 
-Firstly, the program will implement one or more machine learning models for the use of sentiment analysis. It will allow the user to change between different models, and also provide their own training data rather than using the pre-trained models. I will aim to have at least 85\% accuracy with the models, however this will be subject to the quality of the training data.
+Firstly, the programme will implement one or more machine-learning models for the use of sentiment analysis. It will allow the user to change between different models, and provide their own training data rather than using pre-trained models. It aims to have a minimum of 85\% accuracy with the models, however this will be subject to the quality of the training data.
 
-Secondly, the program will provide a way for the user to input their brand or product name. It will then use the X (formerly known as Twitter) API to collect thousands of tweets about the product, abstract them into just text, and then predict their sentiment with the trained models. I also wish to allow the user to provide their own collected text passages about their product.
+Secondly, the programme provides a way for users to input their brand or product name. It then uses the X (formerly known as Twitter) API to collect thousands of tweets about the product, abstract them into just text, and then predict their sentiment with the trained models. The programme allows the user to provide their own collected text passages about their product.
 
-Finally, an accessible GUI must be created which allows the user to easily access all the capabilities and features of the program. This GUI will give the user the ability to search their brand or product name, review the results of the search, and save the results of the search. The user will also be able to change various settings, such as the model and training data used. This aims to create a user friendly environment so that the programme is easy to use.
+Finally, an accessible GUI must be created which allows the user to easily access all the capabilities and features of the programme. This GUI will give the user the ability to search their brand or product name, review results of the search, and save results of the search. The user will also be able to change various settings, such as the model and training data used. This aims to create a user-friendly environment so the programme is easy to use.
 
 Achieving these objectives is critical to the success of this project, as they all contribute to the effectiveness and efficiency of the programme.
 
 % A section detailing the structure of the report following the introduction.
 \section{Report Structure}
-The next chapter of this report is a critical evaluation and review of academic literature that is relevant to this project. It will provide a strong foundation for my work and will establish clear links between existing research and the objectives of my project.
+The next chapter of this report is a critical evaluation and review of academic literature that is relevant to this project. It will provide a strong foundation for this work and establishes clear links between existing research and the objectives of this project.
 
-Following this, the third chapter of my report will present a further analysis of the specific requirements that my solution must satisfy in order to achieve the desired results. This will encompass both the functional and non-functional requirements of the solution, as well as a risk analysis and the testing/evaluation methodologies for the artefact.
+Following this, the third chapter of my report will present further analysis of specific requirements that the solution must satisfy to achieve the desired results. This encompasses both functional and non-functional requirements of the solution, as well as a risk analysis and testing/evaluation methodologies for the artefact.
 
-Chapter 4 will outline the design and methodology implemented in this project. It will discuss the project management approaches and the software development methodologies used. It will also discuss algorithm and model choices, design considerations, analysis methods, performance evaluation strategies, and other relevant aspects of the project design and execution.
+Chapter 4 outlines the design and methodology implemented in this project. It will discuss the project management approaches and software development methodologies used. It will also discuss algorithm and model choices, design considerations, analysis methods, performance evaluation strategies, and other relevant aspects of the project design and execution.
 
-Chapter 5 will provide a clear, detailed description of every component which contributes to the software's implementation, documenting important sections of code where relevant. Here It will also show the results of any testing and evaluation results that are gathered during the development of the artefact.
+Chapter 5 provides a clear, detailed description of every component which contributes to the software's implementation, documenting important sections of code where relevant. Here It will also show the results of any testing and evaluation results that are gathered during the development of the artefact.
 
-Chapter 6 will then present the results of the implementation. Here I will reflect on the project and discuss how it meets the original objectives that were set out to be achieved, and the project's significance within the world of brand monitoring.
+Chapter 6 presents the results of the implementation. This chapter provides reflection on the project and discusses how it meets the original objectives that were set out to be achieved, and the project's significance within the area of brand monitoring.
 
-Finally, the project will be summarised within a conclusion, highlight its achievements, limitation, and implications. It will reflect on the accomplishments of this project and address any unresolved issues.
+Finally, this project concludes highlighting all achievements, limitations, and implications. It reflects on the accomplishments of this project and address any unresolved issues.
 
-\textit{Note: this report is a total of 11,793 words long. Throughout this report there will be references to work from the previous project proposal \citep{atkinson2023proposal}, and the interim report \citep{atkinson2024interim}.}
+\textit{Note: this report is a total of 11,763 words long. Throughout this report there will be references to work from the previous project proposal \citep{atkinson2023proposal}, and the interim report \citep{atkinson2024interim}.}

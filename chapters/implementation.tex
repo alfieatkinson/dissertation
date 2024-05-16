@@ -18,9 +18,9 @@ class BertModel(object):
         This section will outline the steps taken to train and fine-tune the pre-trained BERT model. The majority of the functionality in this section takes place in the \pinline{train()} and \pinline{cross_validate()} methods.
 
         \subsubsection{Examining the Dataset}
-        Before the model can be trained, an appropriate dataset for fine-tuning must be found. As this artefact focuses on social media sentiment analysis, a dataset that has pre-labelled social media posts based on sentiment is needed. For this use-case, the Sentiment140 dataset \citet{sentiment140dataset} was chosen as a widely used and praised dataset for fine-tuning BERT for social media sentiment analysis.
+        Before the model can be trained, an appropriate dataset for fine-tuning must be found. As this artefact focuses on social media sentiment analysis, a dataset that has pre-labelled social media posts based on sentiment is needed. For this use-case, the Sentiment140 dataset \citep{sentiment140dataset} was chosen as a widely used and praised dataset for fine-tuning BERT for social media sentiment analysis.
 
-        When calling \pinline{describe()} on the dataset loaded as a Pandas \pinline{DataFrame}, the results are as shown in the table below. This shows that the dataset labels negative sentiment as `0', and positive sentiment as `4', and also appears to have an equal number of negative and positive entries. This quality will be useful as it prevents issues like model generalisation, class imbalance, and overfitting, while allowing for enhanced performance and better feature representation learning.
+        When calling \pinline{describe()} on the dataset loaded as a Pandas \pinline{DataFrame}, the results are as shown in the table below. This shows that the dataset labels negative sentiment as `0', and positive sentiment as `4', and also appears to have an equal number of negative and positive entries. This quality will be useful as it prevents issues like model generalisation, class imbalance, and over-fitting, while allowing for enhanced performance and better feature representation learning.
 
         \begin{table}[h]
             \centering
@@ -95,9 +95,7 @@ df['sentiment'] = df['sentiment'].replace(4, 1)
         The dataset should also be shuffled, this ensures that there are no related or similar tweets next to each other in the dataset.
 
         \begin{python}
-toolkit.console("Shuffling dataset...")
 df = df.sample(frac=1).reset_index(drop=True)
-toolkit.console("Dataset shuffled.")
         \end{python}
 
         Now that the dataset has been prepared, the text of each post needs to be processed, for this purpose a class \pinline{TextProcessor} is defined to handle all processing.
@@ -191,7 +189,7 @@ history = self.model.fit([X_train_encoded['input_ids'], X_train_encoded['token_t
         \end{python}
 
         \subsubsection{Cross-Validation}
-        Cross-validation is a crucial element to evaluate the performance and robustness of a machine learning model. By splitting the dataset into multiple folds, cross-validation ensures that the model generalises well for unseen data, reducing the likelihood of overfitting, while also providing insight into the model's consistency across different subsets of data.
+        Cross-validation is a crucial element to evaluate the performance and robustness of a machine-learning model. By splitting the dataset into multiple folds, cross-validation ensures that the model generalises well for unseen data, reducing the likelihood of overfitting, while also providing insight into the model's consistency across different subsets of data.
 
         This method is called at the end of the \pinline{train()} function instead of the single \pinline{self.fit_model()} call, if the user has enabled cross-validation. It takes in the training \pinline{DataFrame} and the number of splits \pinline{n_splits}, which defaults to 5. The text and sentiment columns of the dataset are converted into lists to be used later.
 
@@ -388,7 +386,7 @@ post_comments = []
 \section{Database Management}
 All management of the database is done within the \pinline{PostCollector} class found in \pinline{toolkit/data/database.py}. This class incorporates the functionality of \pinline{BertModel}, \pinline{RedditScraper}, and database management operations defined in the class itself.
 
-The class initialises with the passed arguments \pinline{model} and \pinline{scraper}, an instance of \pinline{BertModel} and \pinline{RedditScraper} respectively, and a \pinline{profile}, which is a dictionary containing the details of subreddits and search terms to be scraped. \pinline{self.path} is then set to point at a directory based on the profile ID, which is where the collected data will be stored in \pinline{.json} format. Finally, two empty \pinline{DataFrame}s are created with the relevant column labels for posts and comments, and the object calls \pinline{self.from_json()} to load any data that may already exist for this profile.
+The class initialises with the passed arguments \pinline{model} and \pinline{scraper}, an instance of \pinline{BertModel} and \pinline{RedditScraper} respectively, and a \pinline{profile}, which is a dictionary containing the details of subreddits and search terms to be scraped. \pinline{self.path} is then set to point at a directory based on the profile ID, which is where the collected data will be stored in JSON format. Finally, two empty \pinline{DataFrame}s are created with the relevant column labels for posts and comments, and the object calls \pinline{self.from_json()} to load any data that may already exist for this profile.
 
 \begin{python}
 class PostCollector(object):
@@ -457,7 +455,7 @@ for ID in new_comments['ID']:
     text = f"{title} [SEP] {body} [SEP] {comment}"
 \end{python}
 
-The new data is then stored in \pinline{.json} format for later use using \pinline{self.to_json()}.
+The new data is then stored in JSON format for later use using \pinline{self.to_json()}.
 
 \section{Data Visualisation}
 The \pinline{Analyser} class in \pinline{toolkit/analysis/analyse.py} is crucial for interpreting sentiment data to the user via visual representation; large datasets could be overwhelming to the user, so by visualising the data and breaking it up into more digestible formats, the user is able to make quicker and more accurate insights. Furthermore, representing the data graphically makes it far easier to spot patterns that are not immediately obvious when looking at raw data, such as the change in sentiment over time or comparisons between different subreddits or queries.
@@ -519,10 +517,10 @@ For further insight into the implementation of these charts, visit the GitHub re
 
 \section{Graphical User Interface}
 
-The GUI of the application (\pinline{toolkit/ui/interface.py}) serves as the means by which the user can interact with the functionality of the back-end processes. It is designed to provide an intuitive and user-friendly experience, while keeping performance and responsiveness to a high standard. This section outlines the architecture and components of the GUI, highlighting the core aspects such as the distinct windows and the use of parallel programming for long-running tasks. For the purpose of this application, the \pinline{QtPy} library was used, as it excels at creating complex, responsive, and user-friendly interfaces, as well as providing parallelism features.
+The GUI of the application (\pinline{toolkit/ui/interface.py}) serves as the means by which the user can interact with the functionality of the back-end processes. It is designed to provide an intuitive and user-friendly experience, while keeping performance and responsiveness to a high standard. This section outlines the architecture and components of the GUI, highlighting the core aspects such as the distinct windows and the use of parallel-programming for long-running tasks. For the purpose of this application, the \pinline{QtPy} library was used, as it excels at creating complex, responsive, and user-friendly interfaces, as well as providing parallelism features.
 
     \subsection{Main Window}
-    The \pinline{MainWindow} class, inheriting from \pinline{QtPy}'s \pinline{QMainWindow}, creates the main application, it displays widgets that link to the core functionalities of the program in an accessible format. The layout is built up by embedding other layouts and widgets within each other, creating an interface which is complex but pleasant to use. 
+    The \pinline{MainWindow} class, inheriting from \pinline{QtPy}'s \pinline{QMainWindow}, creates the main application, it displays widgets that link to the core functionalities of the programme in an accessible format. The layout is built up by embedding other layouts and widgets within each other, creating an interface which is complex but pleasant to use. 
 
     \begin{figure}[h]
     \centering
@@ -601,7 +599,7 @@ class MainWindow(QMainWindow):
         \caption{The profile editor window.}
     \end{figure}
 
-    In order for this window to communicate with the main window, a \pinline{pyqtSignal} object must be defined, which allows the transmission of signals between different objects in a program. This signal object is then used in the \pinline{ProfileEditorWindow._update()} function to \pinline{emit()} a signal that is picked up by the \pinline{MainWindow}. This allows the main window to update every time the profile editor window does.
+    In order for this window to communicate with the main window, a \pinline{pyqtSignal} object must be defined, which allows the transmission of signals between different objects in a programme. This signal object is then used in the \pinline{ProfileEditorWindow._update()} function to \pinline{emit()} a signal that is picked up by the \pinline{MainWindow}. This allows the main window to update every time the profile editor window does.
 
     \begin{python}
 class ProfileEditorWindow(QWidget):
@@ -662,7 +660,7 @@ class SettingsWindow(QWidget):
     \end{python}
 
     \subsection{Parallelism for Long-Running Tasks}
-    To ensure the application runs smoothly and efficiently, specifically during resource-intensive tasks such as social media scraping and analysis, \pinline{QtPy}'s parallelism features are used. Running tasks in parallel allows the application to perform multiple tasks simultaneously, significantly reducing the time required to execute. It is also ensures that the GUI stays responsive during these tasks rather than freezing, meaning the user can continue to interact with and use the program unimpeded.
+    To ensure the application runs smoothly and efficiently, specifically during resource-intensive tasks such as social media scraping and analysis, \pinline{QtPy}'s parallelism features are used. Running tasks in parallel allows the application to perform multiple tasks simultaneously, significantly reducing the time required to execute. It is also ensures that the GUI stays responsive during these tasks rather than freezing, meaning the user can continue to interact with and use the programme unimpeded.
 
     In the \pinline{MainWindow}, parallelism is employed in the execution of two functions: \pinline{self._collect_new_posts()} and \pinline{self._train_model()}, both of which are long-running tasks which would freeze the application for an undesirably extended period of time without parallelism. Initially, the class defines a \pinline{self.threadpool} storing a \pinline{QtPy.QThreadPool} object, which handles the queuing and execution of `workers'.
 
@@ -691,7 +689,7 @@ class Worker(QRunnable):
             self.signals.finished.emit()
     \end{python}
 
-    Finally, the two long-running functions are called using multithreading by passing them as a callable upon a \pinline{Worker} creation. The program starts the worker and waits for the `finished' signal from to be emitted, so that it can call \pinline{self._update()}.
+    Finally, the two long-running functions are called using multithreading by passing them as a callable upon a \pinline{Worker} creation. The programme starts the worker and waits for the `finished' signal from to be emitted, so that it can call \pinline{self._update()}.
 
     \begin{python}
 def _collect_new_posts(self):

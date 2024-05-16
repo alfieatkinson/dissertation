@@ -1,7 +1,7 @@
 This section aims to outline the basic design and architecture of the artefact.
 
 \section{System Architecture}
-The sentiment analysis tool will be built as a desktop application developed in Python. The system architecture consists of three main elements: the GUI, the chosen machine learning model for sentiment analysis, and the integration with social media APIs for data retrieval. This section will go into more detail on the specific design and architecture of the application.
+The sentiment analysis tool will be built as a desktop application developed in Python. The system architecture consists of three main elements: the GUI, the chosen machine-learning model for sentiment analysis, and the integration with social media APIs for data retrieval. This section will go into more detail on the specific design and architecture of the application.
 
 \begin{figure}[h]
     \centering
@@ -19,7 +19,7 @@ The sentiment analysis tool will be built as a desktop application developed in 
         The presentation layer is responsible for presenting the processed and analysed data to the user. In \pinline{interface.py} there will be various classes for building and handling the windows and their layouts; there will also be classes for handling functions on other threads in order to preserve the functionality of the GUI while long running operations are in progress.
 
         \subsubsection{Business Logic Layer}
-        The business logic layer is responsible for interpreting the data provided by the layers below. \pinline{analyse.py} will handle the analysis of data, for example the creation of a line chart which plots the sentiment over a given time frame. \pinline{model.py} will contain a class for the machine learning model which will handle training of the model as well as making predictions using the model. Finally, \pinline{preprocess.py} will be responsible for processing and cleaning text before training/making predictions.
+        The business logic layer is responsible for interpreting the data provided by the layers below. \pinline{analyse.py} will handle the analysis of data, for example the creation of a line chart which plots the sentiment over a given time frame. \pinline{model.py} will contain a class for the machine-learning model which will handle training of the model as well as making predictions using the model. Finally, \pinline{preprocess.py} will be responsible for processing and cleaning text before training/making predictions.
 
         \subsubsection{Services Layer}
         The services layer is responsible for interacting with the social media APIs and the data sources. In this layer there is \pinline{database.py}, which collects and manipulates post data from the APIs and any stored, previously collected data. Meanwhile, \pinline{social.py} will contain classes for the social media APIs, with functionality for scraping posts with given search terms.
@@ -39,7 +39,7 @@ The sentiment analysis tool will be built as a desktop application developed in 
             \item \pinline{SubWindow()}: there will be various classes for handling sub-windows such as profile editor and settings.
             \item \pinline{Worker()}: this will be a class for handling multithreaded long-running tasks to keep the GUI responsive in the meantime.
         \end{itemize}
-        \item \pinline{model.py}: the module for handling everything to do with the machine learning models.
+        \item \pinline{model.py}: the module for handling everything to do with the machine-learning models.
         \begin{itemize}
             \item \pinline{BERTModel()}: this class will handle the training and predicting for a BERT model.
             \item \pinline{LSTMModel()}: the class for handling the training and predicting for a LSTM model
@@ -59,7 +59,7 @@ The sentiment analysis tool will be built as a desktop application developed in 
 \section{Data Model}
 As the artefact will involve the storage and retrieval of data, it is appropriate to model the relationships between different entities within the data. The data model consists of three entities: profile, post, and comment; each profile will have a number of posts collected for its specified subreddits, and each post will have a number of comments collected with it if this setting is enabled. Both the posts and comments databases will be in a directory labeled with the profile ID.
 
-For this project, it was decided that json format would be acceptable for storing data, this is due to the portable, efficient, and scalable nature of json, along with the lack of a need for anything with more complex functionality. The json data will be read and temporarily stored in a \pinline{pandas.DataFrame} structure while being used by the program.
+For this project, it was decided that json format would be acceptable for storing data, this is due to the portable, efficient, and scalable nature of json, along with the lack of a need for anything with more complex functionality. The json data will be read and temporarily stored in a \pinline{pandas.DataFrame} structure while being used by the programme.
 
 \begin{figure}[h]
     \centering

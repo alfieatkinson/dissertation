@@ -1,25 +1,25 @@
 \section{Target Audience Identification}
 The main target audience for this application consists of marketing professionals, product managers, and business owners in various industries. The main industries being the technology, retail, and hospitality sectors. However, it should be made available and accessible to other industries and audiences, including public users.
 
-A study by \citet{marketing2023survey} found that 74.6\% of people working in marketing are between the ages of 26 and 45, meaning that they tend to be within the `millennial' age group, a group which seems to be more in touch with technology and social media than older generations \citep{pew2019millennials}. However, a study by \citet{harvard2018research} found that the top 0.1\% of startup companies based on growth in the first 5 years have founders aged 45 on average, only getting older as the company progresses. This means that the program must be accessible to a broad age range, even those who may be unfamiliar with technology.
+A study by \citet{marketing2023survey} found that 74.6\% of people working in marketing are between the ages of 26 and 45, meaning that they tend to be within the `millennial' age group, a group which seems to be more in touch with technology and social media than older generations \citep{pew2019millennials}. However, a study by \citet{harvard2018research} found that the top 0.1\% of startup companies based on growth in the first 5 years have founders aged 45 on average, only getting older as the company progresses. This means that the programme must be accessible to a broad age range, even those who may be unfamiliar with technology.
 
 In conclusion, while there are some demographics that this application should cater towards, it should also be made with all demographics of people in mind.
 
 \section{Functional Requirements}
 
     \subsection{Data Collection and Preprocessing}
-    The program should be able to collect data from various social media platforms, such as X and Reddit. It should also be able to accept \pinline{.json} files containing reviews for the brand. The data should be effectively stripped of any personal data, and made completely anonymous before being stored. The program should also remove noise within the text such as punctuation, stop words, and special characters. Finally, text normalisation techniques such as tokenisation, stemming, and lemmatisation should be applied to ensure consistency in the data.
+    The programme should be able to collect data from various social media platforms, such as X and Reddit. It should also be able to accept JSON files containing reviews for the brand. The data should be effectively stripped of any personal data, and made completely anonymous before being stored. The programme should also remove noise within the text such as punctuation, stop words, and special characters. Finally, text normalisation techniques such as tokenisation, stemming, and lemmatisation should be applied to ensure consistency in the data.
 
-    The aim is to have the program remove 100\% of any personal data and noise that may be present within the social media posts or reviews. It is imperative that this goal is met in order for the application to be effective ethically sound.
+    The aim is to have the programme remove 100\% of any personal data and noise that may be present within the social media posts or reviews. It is imperative that this goal is met in order for the application to be effective ethically sound.
 
-    Both X and Reddit have well documented APIs which will be used to scrape posts relevant to the search term. There are python libraries which make it possible to access these APIs, and also libraries which allow for the reading of \pinline{.json} files.
+    Both X and Reddit have well documented APIs which will be used to scrape posts relevant to the search term. There are python libraries which make it possible to access these APIs, and also libraries which allow for the reading of JSON files.
 
     It should be ensured that the collected data is definitely related to the specified search term in order to provide meaningful insights.
 
     This requirement should be met within the first week of development.
 
     \subsection{Sentiment Analysis}
-    The program will implement BERT for sentiment analysis and the proposed PFDualBERT for capturing complex semantic relevances and consider scarce data samples simultaneously. It will be able to predict whether the general sentiment around a given search term is positive, neutral, or negative; it will be able to predict sentiment polarity about specific aspects within the texts.
+    The programme will implement BERT for sentiment analysis and the proposed PFDualBERT for capturing complex semantic relevances and consider scarce data samples simultaneously. It will be able to predict whether the general sentiment around a given search term is positive, neutral, or negative; it will be able to predict sentiment polarity about specific aspects within the texts.
 
     The predictions should have a sentiment classification accuracy greater than 85\%, to ensure that it is overall robust and effective for analysing public sentiment.
 
@@ -30,11 +30,11 @@ In conclusion, while there are some demographics that this application should ca
     This requirement should be met within the first three weeks of development.
 
     \subsection{Real-Time Analysis}
-    The program will be able to analyse social-media data in real-time; the user will be able to set how often they would like sentiment to be re-evaluated, and the data will be updated accordingly.
+    The programme will be able to analyse social-media data in real-time; the user will be able to set how often they would like sentiment to be re-evaluated, and the data will be updated accordingly.
 
-    The program should be able to find all new social-media posts since the last update with no more than 1 minute delay, ensuring swift and consistent real-time results.
+    The programme should be able to find all new social-media posts since the last update with no more than 1 minute delay, ensuring swift and consistent real-time results.
 
-    Data that has already undergone analysis will be saved to be recalled upon when the user wishes to view the data, this means that the program only needs to analyse new posts every interval.
+    Data that has already undergone analysis will be saved to be recalled upon when the user wishes to view the data, this means that the programme only needs to analyse new posts every interval.
 
     The user will be provided with timely insights into the evolving sentiment surrounding their brand/product.
 
@@ -60,7 +60,7 @@ In conclusion, while there are some demographics that this application should ca
 
     Algorithms will be optimised to take as little time as possible while still performing tasks correctly.
 
-    This assures that the program can meet the demands of processing large volumes of social media data in real-time.
+    This assures that the programme can meet the demands of processing large volumes of social media data in real-time.
 
     This requirement should be met within the first four weeks of development.
 
@@ -78,11 +78,11 @@ In conclusion, while there are some demographics that this application should ca
     \subsection{Security}
     A secure login mechanism will be implemented to control access to the system and protect stored data. All saved data will be encrypted.
 
-    Encryption methods such as Advanced Encryption Standard (AES) encryption will be employed within the program along with a secure login system that makes data inaccessible without the correct password.
+    Encryption methods such as Advanced Encryption Standard (AES) encryption will be employed within the programme along with a secure login system that makes data inaccessible without the correct password.
 
-    The program will use cryptography for AES encryption to implement secure login and data encryption features.
+    The programme will use cryptography for AES encryption to implement secure login and data encryption features.
 
-    By making sure the program and data are secure, users can be sure that data is kept confidential and secure.
+    By making sure the programme and data are secure, users can be sure that data is kept confidential and secure.
 
     This requirement should be met within the first six weeks of development.
 
@@ -93,18 +93,18 @@ In conclusion, while there are some demographics that this application should ca
 
     Python's built-in exception handling will be used, and logging modules will capture errors. Testing frameworks such as pytest will be used to validate the application's reliability.
 
-    User trust and satisfaction will be maintained by ensuring the program operates reliably, minimising downtime and preventing data loss or corruption.
+    User trust and satisfaction will be maintained by ensuring the programme operates reliably, minimising downtime and preventing data loss or corruption.
 
     This requirement should be met within the first eight weeks of development.
 
     \subsection{Accuracy}
-    The program should accurately categorise sentiment in text data, providing the user with reliable sentiment scores and classification.
+    The programme should accurately categorise sentiment in text data, providing the user with reliable sentiment scores and classification.
 
     Data validation checks will be used to ensure the accuracy of the sentiment analysis is at least 85\%.
 
     Well-established sentiment analysis libraries will be used, such as BERT. Unit tests and validation checks will be used to ensure that the desired accuracy is achieved.
 
-    This will allow users to trust the program and its analysis of social media data surrounding the search term.
+    This will allow users to trust the programme and its analysis of social media data surrounding the search term.
 
     This requirement should be met within the first four weeks of development.
 
@@ -123,7 +123,7 @@ In conclusion, while there are some demographics that this application should ca
     The GUI could have poor usability or be seen as unintuitive, which would affect user adoption. To mitigate against this, user testing will be conducted to gather feedback on the GUI design. This feedback will then be iteratively acted upon until user satisfaction is high enough.
 
     \subsection{Terms of Service Changes}
-    Social media platforms frequently update their ToS, which could impact the programs ability to effectively scrape for social media posts or access the API. This can be countered by regularly monitoring the chosen social media's ToS and by implementing flexibility in the program's design to be able to adapt to API changes.
+    Social media platforms frequently update their ToS, which could impact the programme's ability to effectively scrape for social media posts or access the API. This can be countered by regularly monitoring the chosen social media's ToS and by implementing flexibility in the programme's design to be able to adapt to API changes.
 
     \subsection{Ethical Regulation Changes}
     There is always the possibility that changes with ethical regulations may impact the ways sentiment analysis can be used. In order to prevent this being a problem, it is important to stay informed about relevant regulations and ethical guidelines. It is also important to be sure to reflect on the ethics of the project at all stages.
@@ -134,4 +134,4 @@ Ensuring the robustness and reliability of the tool necessitates rigorous valida
 
 Non-functional requirements will be validated through comprehensive testing and performance monitoring. Security measures, including data encryption, will be rigorously evaluated to ensure compliance with industry standards and best practices. Moreover, the reliability and accuracy of the sentiment analysis algorithms will be assessed by comparing the tool's predicitions against manually annotated data sets to measure accuracy and consistency.
 
-On top of this, User Acceptance Testing (UAT) will be conducted to validate that the application meets the expectations and needs of the target audience. This involves soliciting feedback from intended users of the program to gauge the tool's usability, effectiveness, and overall satisfaction.
+On top of this, User Acceptance Testing (UAT) will be conducted to validate that the application meets the expectations and needs of the target audience. This involves soliciting feedback from intended users of the programme to gauge the tool's usability, effectiveness, and overall satisfaction.

@@ -50,7 +50,7 @@ The implementation and testing of the sentiment analysis tool \citep{sentimentan
     \end{figure}
     \FloatBarrier
 
-    Finally, an attempt was made at using 3 fold cross-validation with more rows, and it was found that this approach allows training on a dataset of up to 100,000 rows (higher was not attempted). It was found that even with the extra training data, performance actually showed a fractional decrease, with an accuracy of 99.49\%, mainly as there was not much room to improve. This decrease in accuracy should be disregarded due to the many variables at play, however the training execution time should not be ignored; the time taken for this approach was 4,975 seconds, a 93.61\% increase compared to the 318 seconds that the previous approach took, meaning that even though this may increase generalisation, it is entirely inefficient in comparison.
+    Finally, an attempt was made at using 3 fold cross-validation with more rows, and it was found that this approach allows training on a dataset of up to 100,000 rows (higher was not attempted). It was found that even with the extra training data, performance actually showed a fractional decrease, with an accuracy of 99.49\%, mainly as there was not much room to improve. This decrease in accuracy should be disregarded due to the many variables at play, however the training execution time should not be ignored; the time taken for this approach was 4,975 seconds, a 93.61\% increase compared to the 318 seconds that the previous approach took, meaning that even though this may increase generalisation, it is inefficient in comparison.
 
     \FloatBarrier
     \begin{figure}[h]
@@ -99,7 +99,7 @@ reddit_posts = ["Just landed my dream job! [SEP] I can't believe it finally happ
     \FloatBarrier
 
     \subsection{Social Media Data Collection}
-    To test the social media data collection, the functionality of \pinline{RedditScraper} must be assessed. This was accomplished by performing a simple unit test, to check that the program is capable of retrieving a post from a specified subreddit with specified search terms, along with its comments.
+    To test the social media data collection, the functionality of \pinline{RedditScraper} must be assessed. This was accomplished by performing a simple unit test, to check that the programme is capable of retrieving a post from a specified subreddit with specified search terms, along with its comments.
     \begin{python}
 scraper = toolkit.RedditScraper()
 posts, comments = scraper.search_sub('machinelearning', ['BERT', 'Transformers'], 1)
@@ -161,8 +161,52 @@ for post in posts:
     \end{figure}
     \FloatBarrier
 
+    Finally, the text processing functionality was tested and proven to work as expected.
+
+    \begin{python}
+reddit_post = """
+Hey everyone, check out this cool website: https://example.com. It's really awesome!
+
+I found it on r/coolwebsites. USER shared it there. You can see more cool stuff like this at their subreddit.
+
+[Here's the link to the website](https://example.com).
+"""
+t = toolkit.TextProcessor()
+preprocessed_post = t.clean(reddit_post)
+print(preprocessed_post)
+    \end{python}
+
+    Producing the following processed text
+
+    \FloatBarrier
+    \begin{table}[ht]
+        \centering
+        \begin{tabular}{|p{\textwidth}|}
+            \hline
+            Hey everyone, check out this cool website: URL It's really awesome!  I found it on SUBREDDIT USER shared it there. You can see more cool stuff like this at their subreddit.  [Here's the link to the website](URL) \\
+            \hline
+        \end{tabular}
+        \caption{Processed Reddit post.}
+    \end{table}
+    \FloatBarrier
+
     \subsection{Database management}
-    The collected data is accurately and efficiently stored in \pinline{.json} format, one file for posts and one for comments, for each profile. The different profiles are also stored in \pinline{.json} format, storing information about the subreddits and queries to search.
+    The collected data is accurately and efficiently stored in JSON format, one file for posts and one for comments, for each profile. The different profiles are also stored in JSON, storing information about the subreddits and queries to search. To validate this, some code was run to retrieve stored data.
+
+    \begin{python}
+posts = pd.read_json(f'{path}posts.json')
+comments = pd.read_json(f'{path}comments.json')
+posts['Comments'] = posts['Comments'].map(lambda x: tuple(x))
+first_post = posts.iloc[0]
+first_comment_id = first_post['Comments'][0]
+first_comment = comments.loc[comments['ID'] == first_comment_id]
+for column, value in first_post.items():
+    print(column + ":", value)
+for column, value in first_comment.iloc[0].items():
+    print(column + ":", value)
+    \end{python}
+
+    Producing the following results:
 
     \FloatBarrier
     \begin{table}[ht]
@@ -247,7 +291,7 @@ for post in posts:
         As can be seen, this round of testing did not hit the desired usability score of 8/10, this meant that further refinement of the GUI was necessary before release.
 
         \subsubsection{Hands-On Usability Testing}
-        Once the final, functional GUI was finalised, hands-on usability tests were conducted, for this purpose, the participants were supplied with a fully functional executable to use and rate, along with a short paragraph detailing their thoughts on the GUI.
+        Once the functional GUI was finalised, hands-on usability tests were conducted, for this purpose, the participants were supplied with a fully functional executable to use and rate, along with a short paragraph detailing their thoughts on the GUI.
 
         \FloatBarrier
         \begin{table}[ht]
@@ -261,9 +305,11 @@ for post in posts:
                 Participant 2 & 9/10 & Everything is readable, make sense and seems functional. I got what I was supposed to do fast because every information is well laid out. My only complain would be that on the settings tab I would put the tabs to select the settings categories at the horizontal and not vertical which makes it easier to read and access what you want and also means you don't have to scroll to get to what you need (which a lot of basic users sometimes don't think about) [sec] \\ \hline
                 Participant 3 & 9/10 & This was really well made and easy to use for the tech dummies, like me. Clear instructions and great functional programme. [sec] \\ \hline
                 Participant 4 & 8/10 & It is very clear and usser friendly almost idiot proof. The graphs are clean and understandable. I will happily continue useing it for the forseeable future. [sec] \\ \hline
-                Participant 5 & 10/10 & When first using the tool, I was able to create a profile and inputted some subreddits for analysis. the initial user interface was simple to understand and I managed to navigate around without any issues. I found the results easy to understand and found it very useful to be able to change between the sentiment graphs in order to further analyse the results. I would rate it a 10/10 due to its ease to navigate along with useful metrics being provided . [sec] \\
+                Participant 5 & 10/10 & When first using the tool, I was able to create a profile and inputted some subreddits for analysis. the initial user interface was simple to understand and I managed to navigate around without any issues. I found the results easy to understand and found it very useful to be able to change between the sentiment graphs in order to further analyse the results. I would rate it a 10/10 due to its ease to navigate along with useful metrics being provided . [sec] \\ \hline
+                Participant 6 & 8/10 & I like the colour scheme and the practicality of the layout and the ability to edit profiles easily. The categories could be more bold and easier to see, could be separated more. [sec] \\ \hline
+                Participant 7 & 9.5/10 & I found it simple and easy to use with a very clean interface. It worked flawlessly for me. I'd score it 9.5/10 because good though it is, nothing is ever perfect! [sec] \\
                 \hline\hline
-                \textbf{Average} & \textbf{8.6} & \\
+                \textbf{Average} & \textbf{8.64} & \\
             \end{tabular}
         \end{table}
         \FloatBarrier
@@ -279,8 +325,8 @@ This section aims to provide a link between the previously outlined requirements
     \label{tab:non_functional_requirements}
     \begin{tabular}{p{6cm}|c|p{6cm}}
         \textbf{Requirement} & \textbf{?} & \textbf{Explanation} \\ \hline\hline
-        \textbf{3.3.1} Optimize system performance for 10,000 posts/hr & HALF & Program has the capability, but Reddit API limits requests for the free version. \\ \hline
-        \textbf{3.3.1} Average response time of 360 milliseconds & YES & Program is able to retrieve multiple posts in under a second. \\ \hline
+        \textbf{3.3.1} Optimize system performance for 10,000 posts/hr & HALF & Programme has the capability, but Reddit API limits requests for the free version. \\ \hline
+        \textbf{3.3.1} Average response time of 360 milliseconds & YES & Programme is able to retrieve multiple posts in under a second. \\ \hline
         \textbf{3.3.2} Achieve minimum 8/10 usability score & YES &  \\ \hline
         \textbf{3.3.3} Develop a secure login system & NO & Lack of necessity due to anonymisation of data, as well as time constraints preventing it. \\ \hline
         \textbf{3.3.3} Utilise AES encryption for stored data & NO & Lack of necessity due to anonymisation of data, as well as time constraints preventing it. \\ \hline
@@ -305,9 +351,9 @@ This section aims to provide a link between the previously outlined requirements
         \textbf{3.2.2} Implement PFDualBERT for semantic relevance & NO & Although PFDualBERT proved to be powerful, due to time constraints it was not implemented. \\ \hline
         \textbf{3.2.2} Predict general sentiment around a term & YES & Sentiment prediction was used with specific subreddits and queries (\pinline{model.py}, \pinline{database.py}). \\ \hline
         \textbf{3.2.2} Predict sentiment polarity about specific aspects & NO & PFDualBERT was not implemented due to time constraints. \\ \hline
-        \textbf{3.2.3} Analyze social-media data in real-time & HALF & Program has the capability, free Reddit API does not support so many requests (\pinline{social.py}, \pinline{database.py}, \pinline{analyse.py}). \\ \hline
-        \textbf{3.2.3} Find new social-media posts with minimal delay & HALF & Program has the capability, Reddit API does not allow collecting posts from specific time-frame (\pinline{social.py}). \\ \hline
-        \textbf{3.2.3} Save analyzed data for future recall & YES & Data saved in \pinline{.json} format (\pinline{database.py}). \\ \hline
+        \textbf{3.2.3} Analyze social-media data in real-time & HALF & Programme has the capability, free Reddit API does not support so many requests (\pinline{social.py}, \pinline{database.py}, \pinline{analyse.py}). \\ \hline
+        \textbf{3.2.3} Find new social-media posts with minimal delay & HALF & Programme has the capability, Reddit API does not allow collecting posts from specific time-frame (\pinline{social.py}). \\ \hline
+        \textbf{3.2.3} Save analyzed data for future recall & YES & Data saved in JSON format (\pinline{database.py}). \\ \hline
         \textbf{3.2.4} Implement user-friendly interface & YES & GUI intuitively controls the underlying system (\pinline{interface.py}). \\ 
     \end{tabular}
 \end{table}
@@ -318,11 +364,11 @@ Through the implementation and testing of the sentiment analysis tool \citep{sen
 
 The sentiment analysis model was based on the BERT architecture, fine-tuning the model to fit to the specific task of social media sentiment analysis. It exhibited promising accuracy during testing, however was found to be possibly over-fitting to the training data; due to this, other training methods were explored, such as cross-validation, which proved to be incredibly accurate and provided results exceeding expectations. However the promising PFDualBERT was unable to be implemented, as the complexity of the model was underestimated, as well as time constraints disallowing it.
 
-Social media collection through was successfully implemented through the Reddit API, retrieving posts containing the correct queries in a timely manner. However, due to newly imposed API limitations, it was not possible to collect data in real-time, or collect large amounts of data at a time. Specifically, the X API was entirely unusable for the purpose of collecting post data, and so it was necessary to make the application more Reddit-centric, which actually made the program architecture simpler to implement, and resulted in a more sensible implementation.
+Social media collection through was successfully implemented through the Reddit API, retrieving posts containing the correct queries in a timely manner. However, due to newly imposed API limitations, it was not possible to collect data in real-time, or collect large amounts of data at a time. Specifically, the X API was entirely unusable for the purpose of collecting post data, and so it was necessary to make the application more Reddit-centric, which actually made the programme architecture simpler to implement, and resulted in a more sensible implementation.
 
 The database management implementation proved to be efficient and scalable, with JSON providing a simple format and facilitating efficient reading and writing of data. However, it was not possible to implement AES encryption or a login system due to time constraints.
 
-The GUI took up a large chunk of the development time, and was the main cause of time constraints for other parts of the program. However, after the initial design proposal and feedback, the GUI showed a high usability score, making the extra time spend worthwhile.
+The GUI took up a large chunk of the development time, and was the main cause of time constraints for other parts of the programme. However, after the initial design proposal and feedback, the GUI showed a high usability score, making the extra time spend worthwhile.
 
 Overall, the development process went incredibly smoothly, and produced very satisfiable results, with meaningful considerations for future development.
 
